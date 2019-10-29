@@ -1,3 +1,15 @@
+# Volley (fork of serve)
+
+Volley is just Zeit's Serve with Basic Access auth.
+
+We use .htaccess Apache convention for this. Just add a htpasswd file to your directory. 
+
+And install volley (as you would serve) and run (as you would serve).
+
+There's no affiliation between this project and serve, and no permission or approval was sought nor given before this was published.
+
+Below is preserved the Serve README. 
+
 ![](https://assets.zeit.co/image/upload/v1527770721/repositories/serve/serve-repo-banner.png)
 
 [![Build Status](https://circleci.com/gh/zeit/serve.svg?&style=shield)](https://circleci.com/gh/zeit/serve)
