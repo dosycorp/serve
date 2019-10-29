@@ -31,7 +31,7 @@ const interfaces = os.networkInterfaces();
 
 let htPasswdFile;
 try {
-  htPasswdFile = fs.readFileSync(path.join(__dirname, '.htpasswd'));
+  htPasswdFile = fs.readFileSync(path.join('.htpasswd'));
 } catch(e) {}
 const warning = (message) => chalk`{yellow WARNING:} ${message}`;
 const info = (message) => chalk`{magenta INFO:} ${message}`;
@@ -215,8 +215,8 @@ const startEndpoint = (endpoint, config, args, previous) => {
     const AUTH_OPTS = {
       realm: args['--realm'] || "Project 2501",
       file: htPasswdFile ? 
-        path.join(__dirname, '.htpasswd') : 
-        path.join(__dirname, args['--htpasswd'])
+        path.join('.htpasswd') : 
+        path.join(args['--htpasswd'])
     };
     const auth = rfc7325.basic(AUTH_OPTS);
     server = httpMode === 'https'
