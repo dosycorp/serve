@@ -31,7 +31,7 @@ const interfaces = os.networkInterfaces();
 
 let htPasswdFile;
 try {
-  htPasswdFile = fs.readFileSync(path.join(__dirname, '..', '.htpasswd'));
+  htPasswdFile = fs.readFileSync(path.join(__dirname, '.htpasswd'));
 } catch(e) {}
 const warning = (message) => chalk`{yellow WARNING:} ${message}`;
 const info = (message) => chalk`{magenta INFO:} ${message}`;
@@ -188,6 +188,11 @@ const startEndpoint = (endpoint, config, args, previous) => {
 	const compress = args['--no-compression'] !== true;
 	const httpMode = args['--ssl-cert'] && args['--ssl-key'] ? 'https' : 'http';
   const authedUp = args['--htpasswd'] || htPasswdFile;
+  if ( ! args['-d'] && htPasswdFile ) {
+    throw new Error(`
+      Sorry cannot serve directory that includes .htpasswd
+    `);
+  }
 
       // TEST
 
@@ -210,7 +215,7 @@ const startEndpoint = (endpoint, config, args, previous) => {
     const AUTH_OPTS = {
       realm: args['--realm'] || "Project 2501",
       file: htPasswdFile ? 
-        path.join(__dirname, '..', '.htpasswd') : 
+        path.join(__dirname, '.htpasswd') : 
         path.join(__dirname, args['--htpasswd'])
     };
     const auth = rfc7325.basic(AUTH_OPTS);
