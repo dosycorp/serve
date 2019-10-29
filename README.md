@@ -2,6 +2,10 @@
 
 Volley is just Zeit's Serve with Basic Access auth.
 
+The name is from Tennis. Adding basic access handshake to HTTP is to HTTP what a Volley is to a Serve. 
+
+At least to me. :shrug:
+
 We use .htaccess Apache convention for this. Just add a htpasswd file to your directory. 
 
 And install volley (as you would serve) and run (as you would serve).

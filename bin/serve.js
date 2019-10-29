@@ -19,6 +19,7 @@ const handler = require('serve-handler');
 const schema = require('@zeit/schemas/deployment/config-static');
 const boxen = require('boxen');
 const compression = require('compression');
+const rfc7325 = require('http-auth');
 
 // Utilities
 const pkg = require('../package');
@@ -28,6 +29,10 @@ const compressionHandler = promisify(compression());
 
 const interfaces = os.networkInterfaces();
 
+let htPasswdFile;
+try {
+  htPasswdFile = fs.readFileSync(path.join(__dirname, '..', '.htpasswd'));
+} catch(e) {}
 const warning = (message) => chalk`{yellow WARNING:} ${message}`;
 const info = (message) => chalk`{magenta INFO:} ${message}`;
 const error = (message) => chalk`{red ERROR:} ${message}`;
@@ -182,6 +187,9 @@ const startEndpoint = (endpoint, config, args, previous) => {
 	const clipboard = args['--no-clipboard'] !== true;
 	const compress = args['--no-compression'] !== true;
 	const httpMode = args['--ssl-cert'] && args['--ssl-key'] ? 'https' : 'http';
+  const authedUp = args['--htpasswd'] || htPasswdFile;
+
+      // TEST
 
 	const serverHandler = async (request, response) => {
 		if (compress) {
@@ -190,14 +198,33 @@ const startEndpoint = (endpoint, config, args, previous) => {
 
 		return handler(request, response, config);
 	};
+  
+  let server;
 
-	const server = httpMode === 'https'
-		? https.createServer({
-			key: fs.readFileSync(args['--ssl-key']),
-			cert: fs.readFileSync(args['--ssl-cert'])
-		}, serverHandler)
-		: http.createServer(serverHandler);
-
+  if ( authedUp ) {
+    if ( httpMode == 'https' ) {
+      throw new Error(`
+        Sorry, HTTP Auth does not currently support HTTPS.
+      `);
+    }
+    const AUTH_OPTS = {
+      realm: args['--realm'] || "Project 2501",
+      file: htPasswdFile ? 
+        path.join(__dirname, '..', '.htpasswd') : 
+        path.join(__dirname, args['--htpasswd'])
+    };
+    const auth = rfc7325.basic(AUTH_OPTS);
+    server = httpMode === 'https'
+      ? https.createServer(auth, serverHandler)
+      : http.createServer(auth, serverHandler);
+  } else {
+    server = httpMode === 'https'
+      ? https.createServer({
+        key: fs.readFileSync(args['--ssl-key']),
+        cert: fs.readFileSync(args['--ssl-cert'])
+      }, serverHandler)
+      : http.createServer(serverHandler);
+  }
 	server.on('error', (err) => {
 		if (err.code === 'EADDRINUSE' && endpoint.length === 1 && !isNaN(endpoint[0])) {
 			startEndpoint([0], config, args, endpoint[0]);
@@ -368,6 +395,8 @@ const loadConfig = async (cwd, entry, args) => {
 			'--symlinks': Boolean,
 			'--ssl-cert': String,
 			'--ssl-key': String,
+			'--htpasswd': String,
+			'--realm': String,
 			'-h': '--help',
 			'-v': '--version',
 			'-l': '--listen',

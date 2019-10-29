@@ -1,22 +1,20 @@
 {
-  "name": "serve",
+  "name": "voli",
   "version": "11.2.0",
   "description": "Static file serving and directory listing",
   "scripts": {
-    "test": "yarn lint",
-    "lint": "zeit-eslint --ext .jsx,.js .",
-    "lint-staged": "git diff --diff-filter=ACMRT --cached --name-only '*.js' '*.jsx' | xargs zeit-eslint"
   },
   "files": [
     "bin"
   ],
-  "repository": "zeit/serve",
+  "repository": "dosycorp/voli",
   "bin": {
-    "serve": "./bin/serve.js"
+    "voli": "./bin/voli.js"
   },
   "keywords": [
     "now",
     "serve",
+    "http-auth",
     "micro",
     "http-server"
   ],
@@ -32,9 +30,6 @@
       "@zeit/eslint-config-node"
     ]
   },
-  "git": {
-    "pre-commit": "lint-staged"
-  },
   "dependencies": {
     "@zeit/schemas": "2.6.0",
     "ajv": "6.5.3",
@@ -43,6 +38,7 @@
     "chalk": "2.4.1",
     "clipboardy": "1.2.3",
     "compression": "1.7.3",
+    "http-auth": "^3.2.4",
     "serve-handler": "6.1.2",
     "update-check": "1.5.2"
   }
