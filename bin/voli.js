@@ -31,7 +31,7 @@ const interfaces = os.networkInterfaces();
 
 let htPasswdFile;
 try {
-  htPasswdFile = fs.readFileSync(path.join('.htpasswd'));
+  htPasswdFile = fs.readFileSync(path.resolve(process.cwd(), '.htpasswd'));
 } catch(e) {}
 const warning = (message) => chalk`{yellow WARNING:} ${message}`;
 const info = (message) => chalk`{magenta INFO:} ${message}`;
@@ -99,6 +99,8 @@ const getHelp = () => chalk`
       --ssl-cert                          Optional path to an SSL/TLS certificate to serve with HTTPS
 
       --ssl-key                           Optional path to the SSL/TLS certificate\'s private key
+
+      --htpasswd                          Optional path to a HTTP Auth passwd file.
 
   {bold ENDPOINTS}
 
@@ -188,7 +190,8 @@ const startEndpoint = (endpoint, config, args, previous) => {
 	const compress = args['--no-compression'] !== true;
 	const httpMode = args['--ssl-cert'] && args['--ssl-key'] ? 'https' : 'http';
   const authedUp = args['--htpasswd'] || htPasswdFile;
-  if ( ! args['-d'] && htPasswdFile ) {
+  console.log(process.cwd(), config, htPasswdFile );
+  if ( config.public == '' && htPasswdFile ) {
     throw new Error(`
       Sorry cannot serve directory that includes .htpasswd
     `);
