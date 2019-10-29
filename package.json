@@ -1,6 +1,6 @@
 {
   "name": "voli",
-  "version": "11.2.5",
+  "version": "11.2.6",
   "description": "Static file serving and directory listing",
   "scripts": {},
   "files": [
