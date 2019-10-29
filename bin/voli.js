@@ -190,7 +190,6 @@ const startEndpoint = (endpoint, config, args, previous) => {
 	const compress = args['--no-compression'] !== true;
 	const httpMode = args['--ssl-cert'] && args['--ssl-key'] ? 'https' : 'http';
   const authedUp = args['--htpasswd'] || htPasswdFile;
-  console.log(process.cwd(), config, htPasswdFile );
   if ( config.public == '' && htPasswdFile ) {
     throw new Error(`
       Sorry cannot serve directory that includes .htpasswd
